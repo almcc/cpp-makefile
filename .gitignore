@@ -1,0 +1,5 @@
+.vagrant
+bin/
+dst/
+obj/
+rpt/
