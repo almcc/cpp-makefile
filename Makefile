@@ -14,7 +14,6 @@ RELEASE = $(NAME)-$(VERSION)-$(LABEL)$(BUILD)
 
 SRC_DIR = src/
 TST_DIR = tst/
-SYS_DIR = sys/
 OBJ_DIR = obj/
 BIN_DIR = bin/
 LIB_DIR = lib/
@@ -136,14 +135,10 @@ lcov-html: clean-cpp cppunit
 	lcov --remove $(RPT_DIR)cppunit-coverage.info  "tst/*" -o $(RPT_DIR)cppunit-coverage.info
 	genhtml $(RPT_DIR)cppunit-coverage.info --output-directory $(RPT_DIR)cppunit-coverage-html
 
-install: bins
+install: all
 	@echo "Installing to $(DESTDIR)"
-	mkdir -p $(DESTDIR)/opt/$(NAME)/
-	cp -p $(BIN_DIR)$(NAME) $(DESTDIR)/opt/$(NAME)/
-	mkdir -p $(DESTDIR)/etc/$(NAME)
-	cp -p $(SYS_DIR)etc/$(NAME)/* $(DESTDIR)/etc/$(NAME)/
-	mkdir -p $(DESTDIR)/etc/init.d/
-	cp -p $(SYS_DIR)etc/init.d/$(NAME) $(DESTDIR)/etc/init.d/$(NAME)
+	mkdir -p $(DESTDIR)/usr/local/bin/
+	cp -p $(BIN_DIR)$(NAME) $(DESTDIR)/usr/local/bin/
 
 uninstall:
 	@echo "Uninstalling from $(DESTDIR)"
