@@ -54,14 +54,16 @@ OBJS = $(patsubst $(SRC_DIR)%,$(OBJ_DIR)%,$(SRCS:.cpp=.o))
 COMMON_SRCS = $(shell for file in `find $(SRC_DIR)common -name *.cpp`; do echo $$file; done)
 COMMON_OBJS = $(patsubst $(SRC_DIR)common%,$(OBJ_DIR)common%,$(COMMON_SRCS:.cpp=.o))
 
-TEST_SRCS = $(shell for file in `find $(TST_DIR)common -name *.cpp`; do echo $$file; done)
-TEST_OBJS = $(patsubst $(TST_DIR)common%,$(OBJ_DIR)common%,$(TEST_SRCS:.cpp=.o))
-
 # Bin specific Objects
 # ==============================
 
 APP_OBJS = $(COMMON_OBJS) $(OBJ_DIR)mains/$(NAME)-main.o
-UNITTEST_OBJS = $(COMMON_OBJS) $(TEST_OBJS) $(OBJ_DIR)mains/unittest-main.o
+
+# Tests
+# ==============================
+
+TEST_SRCS = $(shell for file in `find $(TST_DIR)common -name *.h`; do echo $$file; done)
+
 
 # Targets
 # ==============================
@@ -100,40 +102,49 @@ clean-cpp:
 	@rm -rf $(DST_DIR)
 	@rm -rf $(LIB_DIR)
 	@rm -f $(SRC_DIR)/common/Release.h
+	@rm -rf tst/runners/
 
 clean: clean-cpp
 	@echo "Cleaning everything else."
 	@rm -rf $(RPT_DIR)
 
-cppunit-xml: $(BIN_DIR)unittest
-	@mkdir -p $(RPT_DIR)
-	@$(BIN_DIR)unittest --xml $(RPT_DIR)cppunit-results.xml
-	@xsltproc  -o $(RPT_DIR)xunit-results.xml utils/cpp2junit.xslt $(RPT_DIR)cppunit-results.xml
+# Unit testing (CxxTest)
+# ==============================
 
-cppcheck-xml:
-	@mkdir -p $(RPT_DIR)
-	@cppcheck --quiet --enable=all --xml --suppress=missingInclude -I$(SRC_DIR)common/ $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck-results.xml
+cxxtest: tst/runners/runner.cpp $(COMMON_OBJS)
+	@mkdir -p bin/
+	@$(CC) $(CC_FLAGS) $(CC_INCLUDES) $(COMMON_OBJS) -o bin/runner tst/runners/runner.cpp
 
-cppunit: $(BIN_DIR)unittest
+tst/runners/runner.cpp: $(TEST_SRCS)
+	@mkdir -p tst/runners/
+	@cxxtestgen --error-printer -o tst/runners/runner.cpp $(TEST_SRCS)
+
+lcov-html: clean-cpp cxxtest
+	@./bin/runner
 	@mkdir -p $(RPT_DIR)
-	@$(BIN_DIR)unittest > $(RPT_DIR)cppunit-results.txt
-	@cat $(RPT_DIR)cppunit-results.txt
+	lcov --base-directory . --directory . --capture --output-file $(RPT_DIR)cppunit-coverage.info
+	lcov --remove $(RPT_DIR)cppunit-coverage.info  "/usr*" -o $(RPT_DIR)cppunit-coverage.info
+	lcov --remove $(RPT_DIR)cppunit-coverage.info  "tst/*" -o $(RPT_DIR)cppunit-coverage.info
+	genhtml $(RPT_DIR)cppunit-coverage.info --output-directory $(RPT_DIR)cppunit-coverage-html
+
+# Static analysis
+# ==============================
 
 cppcheck:
 	@mkdir -p $(RPT_DIR)
 	@cppcheck --quiet --enable=all --suppress=missingInclude -I$(SRC_DIR)common/ $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck-results.txt
 	@cat $(RPT_DIR)cppcheck-results.txt
 
+cppcheck-xml:
+	@mkdir -p $(RPT_DIR)
+	@cppcheck --quiet --enable=all --xml --suppress=missingInclude -I$(SRC_DIR)common/ $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck-results.xml
+
 cppcheck-html: cppcheck-xml
 	@mkdir -p $(RPT_DIR)
 	utils/cppcheck-htmlreport --file=$(RPT_DIR)cppcheck-results.xml --report-dir=$(RPT_DIR)cppcheck-results-html --source-dir=.
 
-lcov-html: clean-cpp cppunit
-	@mkdir -p $(RPT_DIR)
-	lcov --base-directory . --directory . --capture --output-file $(RPT_DIR)cppunit-coverage.info
-	lcov --remove $(RPT_DIR)cppunit-coverage.info  "/usr*" -o $(RPT_DIR)cppunit-coverage.info
-	lcov --remove $(RPT_DIR)cppunit-coverage.info  "tst/*" -o $(RPT_DIR)cppunit-coverage.info
-	genhtml $(RPT_DIR)cppunit-coverage.info --output-directory $(RPT_DIR)cppunit-coverage-html
+# Installing & releasing
+# ==============================
 
 install: all
 	@echo "Installing to $(DESTDIR)"
@@ -178,26 +189,16 @@ $(SRC_DIR)/common/Release.h:
 # Linking
 # ==============================
 
-$(BIN_DIR)$(NAME): $(APP_OBJS) $(OBJ_DIR)mains/$(NAME)-main.o
+$(BIN_DIR)$(NAME): $(APP_OBJS)
 	@echo "Linking APP_OBJS into $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(LK_FLAGS) $(APP_OBJS) $(LIB_INC) -Wl,-Bstatic $(STATIC_LIBS) -Wl,-Bdynamic $(SHARED_LIBS) -Wl,--as-needed -o $@
-
-$(BIN_DIR)unittest: $(UNITTEST_OBJS) $(OBJ_DIR)mains/unittest-main.o
-	@echo "Linking UNITTEST_OBJS into $@"
-	@mkdir -p $(dir $@)
-	@$(CC) $(LK_FLAGS) $(UNITTEST_OBJS) $(LIB_INC) -Wl,-Bstatic $(STATIC_LIBS) -Wl,-Bdynamic $(SHARED_LIBS) -lcppunit -Wl,--as-needed -o $@
 
 # Compiling Mains
 # ==============================
 # Compiling mains separately as there is no header file for main files.
 
 $(OBJ_DIR)mains/$(NAME)-main.o: $(SRC_DIR)mains/$(NAME)-main.cpp $(SRC_DIR)/common/Release.h
-	@echo "Compling $< into $@"
-	@mkdir -p $(dir $@)
-	@$(CC) $(CC_FLAGS) $(CC_INCLUDES) -c $< -o $@
-
-$(OBJ_DIR)mains/unittest-main.o: $(TST_DIR)mains/unittest-main.cpp $(SRC_DIR)/common/Release.h
 	@echo "Compling $< into $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(CC_INCLUDES) -c $< -o $@
