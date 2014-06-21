@@ -5,3 +5,4 @@ obj/
 rpt/
 *.gcno
 *.gcda
+TEST-cxxtest.xml

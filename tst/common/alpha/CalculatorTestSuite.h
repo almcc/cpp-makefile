@@ -14,6 +14,7 @@ public:
     {
         alpha::Calculator calc;
         TS_ASSERT_EQUALS(calc.add(1,1), 2);
+        TS_ASSERT_EQUALS(calc.add(1,-1), 0);
     }
 
     void tearDown(void)
