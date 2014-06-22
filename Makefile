@@ -112,7 +112,8 @@ cxxtest: $(TST_RUNNER_BIN)
 	@mkdir -p $(RPT_DIR)/cxxtest-html/
 	@$(TST_RUNNER_BIN)
 	@mv $(TST_XML_OUT) $(RPT_DIR)
-	xsltproc utils/xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
+	@xsltproc utils/xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
+	@cp utils/jquery.min.js $(RPT_DIR)/cxxtest-html/
 
 lcov: clean-cpp $(TST_RUNNER_BIN)
 	@$(TST_RUNNER_BIN)
