@@ -9,7 +9,7 @@ namespace alpha
         Calculator();
         ~Calculator();
 
-        int add(int a, int b);
+        int add(int first, int second);
     };
 }  // namespace alpha
 

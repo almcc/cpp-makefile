@@ -6,8 +6,8 @@ namespace alpha
 
     Calculator::~Calculator() {}
 
-    int Calculator::add(int a, int b)
+    int Calculator::add(int first, int second)
     {
-        return a + b;
+        return first + second;
     }
 }  // namespace alpha
