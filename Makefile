@@ -81,7 +81,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean test cxxtest lcov cppcheck vera cpplint install uninstall dist
+.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -101,20 +101,19 @@ clean: clean-cpp
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
 
-test: cppcheck vera cpplint fresh cxxtest lcov  
+test: clean cppcheck vera cpplint oclint all cxxtest  
 
 # Unit testing (CxxTest)
 # ==============================
 
 cxxtest: $(TST_RUNNER_BIN)
+	@echo "Running cxxtest ..."
 	@mkdir -p $(RPT_DIR)/cxxtest-html/
+	@lcov --directory . --zerocounters
 	@$(TST_RUNNER_BIN)
 	@mv $(TST_XML_OUT) $(RPT_DIR)
 	@xsltproc utils/xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
 	@cp utils/web/js/jquery.min.js $(RPT_DIR)/cxxtest-html/
-
-lcov: clean-cpp $(TST_RUNNER_BIN)
-	@$(TST_RUNNER_BIN)
 	@mkdir -p $(RPT_DIR)
 	@lcov --base-directory . --directory . --capture --output-file $(RPT_DIR)coverage.info
 	@lcov --remove $(RPT_DIR)coverage.info  "/usr*" -o $(RPT_DIR)coverage.info
@@ -125,12 +124,14 @@ lcov: clean-cpp $(TST_RUNNER_BIN)
 # ==============================
 
 cppcheck: $(SRC_DIR)/common/Release.h
+	@echo "Running cppcheck ..."
 	@mkdir -p $(RPT_DIR)
 	@rm -rf $(RPT_DIR)cppcheck-html
 	@cppcheck --quiet --enable=all --xml --suppress=missingIncludeSystem $(CC_INCLUDES) $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck.xml
 	@utils/cppcheck-htmlreport --file=$(RPT_DIR)cppcheck.xml --report-dir=$(RPT_DIR)cppcheck-html --source-dir=.
 
 vera: $(SRC_DIR)/common/Release.h
+	@echo "Running vera ..."
 	@mkdir -p $(RPT_DIR)
 	@rm -f $(RPT_DIR)vera.txt
 	@vera++ -rule F001 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Source files should not use the '\r' (CR) character
@@ -158,7 +159,8 @@ vera: $(SRC_DIR)/common/Release.h
 	@vera++ -rule T019 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Control structures should have complete curly-braced block of code
 	@cat $(RPT_DIR)vera.txt
 	
-cpplint:
+cpplint: $(SRC_DIR)/common/Release.h
+	@echo "Running cpplint ..."
 	@rm -f $(RPT_DIR)cpplint.txt
 	@rm -rf $(RPT_DIR)cpplint-html/
 	@mkdir -p $(RPT_DIR)cpplint-html/
@@ -168,6 +170,12 @@ cpplint:
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
 	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt > $(RPT_DIR)cpplint-html/index.html
 	@cp -r utils/web $(RPT_DIR)cpplint-html/
+
+oclint: $(SRC_DIR)/common/Release.h
+	@echo "Running oclint ..."
+	@rm -rf $(RPT_DIR)oclint-html/
+	@mkdir -p $(RPT_DIR)oclint-html/
+	@oclint -report-type html -o $(RPT_DIR)oclint-html/index.html $(SRCS) -- -c $(CC_FLAGS) $(CC_INCLUDES)
 
 # Installing & releasing
 # ==============================
