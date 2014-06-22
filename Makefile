@@ -102,6 +102,17 @@ clean: clean-cpp
 	@rm -f $(TST_XML_OUT)
 
 test: clean cppcheck vera cpplint oclint all cxxtest  
+	@mkdir -p $(RPT_DIR)
+	@cp -r utils/web $(RPT_DIR)
+	@jade --obj "{ 'name': '$(NAME)', \
+				   'major': '$(MAJOR)', \
+				   'minor': '$(MINOR)', \
+				   'fix': '$(FIX)', \
+				   'label': '$(LABEL)', \
+				   'build': '$(BUILD)', \
+				   'version': '$(VERSION)', \
+				   'release': '$(RELEASE)' \
+				}" utils/index.jade -o rpt
 
 # Unit testing (CxxTest)
 # ==============================
@@ -169,7 +180,6 @@ cpplint: $(SRC_DIR)/common/Release.h
 	                  --filter=-legal,-whitespace/braces \
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
 	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt > $(RPT_DIR)cpplint-html/index.html
-	@cp -r utils/web $(RPT_DIR)cpplint-html/
 
 oclint: $(SRC_DIR)/common/Release.h
 	@echo "Running oclint ..."
