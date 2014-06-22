@@ -128,6 +128,7 @@ lcov: clean-cpp $(TST_RUNNER_BIN)
 
 cppcheck: $(SRC_DIR)/common/Release.h
 	@mkdir -p $(RPT_DIR)
+	@rm -rf $(RPT_DIR)cppcheck-html
 	@cppcheck --quiet --enable=all --xml --suppress=missingIncludeSystem $(CC_INCLUDES) $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck.xml
 	@utils/cppcheck-htmlreport --file=$(RPT_DIR)cppcheck.xml --report-dir=$(RPT_DIR)cppcheck-html --source-dir=.
 
