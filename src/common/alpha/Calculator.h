@@ -1,7 +1,5 @@
-#ifndef alpha_Calculator_H
-#define alpha_Calculator_H
-
-using namespace std;
+#ifndef SRC_COMMON_ALPHA_CALCULATOR_H_
+#define SRC_COMMON_ALPHA_CALCULATOR_H_
 
 namespace alpha
 {
@@ -9,12 +7,12 @@ namespace alpha
     {
         friend class CalculatorTest;
 
-        public:
-            Calculator();
-            ~Calculator();
+     public:
+        Calculator();
+        ~Calculator();
 
-            int add(int a, int b);
+        int add(int a, int b);
     };
-}
+}  // namespace alpha
 
-#endif
+#endif  // SRC_COMMON_ALPHA_CALCULATOR_H_

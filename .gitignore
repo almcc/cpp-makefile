@@ -5,4 +5,5 @@ obj/
 rpt/
 *.gcno
 *.gcda
-TEST-cxxtest.xml
+cxxtest.xml
+*.DS_Store

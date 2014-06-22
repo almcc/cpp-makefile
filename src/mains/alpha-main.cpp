@@ -1,16 +1,11 @@
-#include <iostream>
-
-#include "Release.h"
-
+#include "./Release.h"
 #include "alpha/Calculator.h"
 
-
-using namespace std;
-using namespace alpha;
+using std;
+using alpha;
 
 int main(int const argc, const char ** const argv)
 {
-    cout << "Release: " << RELEASE << endl;
     Calculator calc;
-    cout << "1 + 3 = " << calc.add(1, 3) << endl;
+    return calc.add(1, -1);
 }

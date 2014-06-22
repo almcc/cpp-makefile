@@ -10,4 +10,4 @@ namespace alpha
     {
         return a + b;
     }
-}
+}  // namespace alpha
