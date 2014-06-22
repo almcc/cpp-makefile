@@ -3,6 +3,20 @@
 import re
 import sys
 
+src_dir = sys.argv[2] + "/"
+def get_lines_of_file(filename, line_number, buffer):
+    f = open(filename)
+    alllines = [x[:-1] for x in f.readlines()]
+    f.close() 
+    lines = []
+    for index, line in enumerate(alllines):
+        start = line_number - buffer
+        finish = line_number + buffer
+        current_line_num = index + 1
+        if current_line_num >= start and current_line_num <= finish:            
+            lines.append("{:0>3}: {}".format(current_line_num, line))
+    return lines
+
 class Line:
     def isOne(self, line):
         if self.regex.match(line):
@@ -35,17 +49,13 @@ class FileCollection:
        return html
 
     def html_table(self):
-        html = "<table class='table grid'>"
-        html += "<thead>"
-        html += "<tr>"
-        html += "<th>Filename</th>"
-        html += "</tr>"
-        html += "</thead>"
+        html = "<table class='information'>"
         html += "<tbody>"
         for file in self.files:
             html += file.html_row()
         html += "</tbody>"
         html += "<table>"
+        html += "<hr />"
         return html
 
 class Result(Line):
@@ -58,15 +68,70 @@ class Result(Line):
         self.sub_category = ""
         self.severity = 0
 
+    def get_source(self):
+        lines = get_lines_of_file(src_dir+self.filename, self.line, 2)
+        string = ""
+        for line in lines:
+            string += line + "\n"
+        return string
+
+    def get_category_label(self):
+        if self.category == "build":
+            return "warning"
+        if self.category == "legal":
+            return "success"
+        if self.category == "readability":
+            return "info"
+        if self.category == "runtime":
+            return "danger"
+        if self.category == "whitespace":
+            return "primary"
+        return "default"
+
+    def get_severity_color(self):
+        if self.severity == 5:
+            return "#FF3004"
+        if self.severity == 4:
+            return "#E8570C"
+        if self.severity == 3:
+            return "#FF8200"
+        if self.severity == 2:
+            return "#E89B0C"
+        if self.severity == 1:
+            return "#FFC70D"
+        return "black"
+
+
     def html_row(self):
-        html = "<tr>"
-        html += "<td>{0}</td>".format(self.filename)
-        html += "<td>{0}</td>".format(self.line)
-        html += "<td>{0}</td>".format(self.error)
-        html += "<td>{0}</td>".format(self.category)
-        html += "<td>{0}</td>".format(self.sub_category)
-        html += "<td>{0}</td>".format(self.severity)
+        html = "<div class='row'>"
+        html += "<div class='col-md-6'>"
+        html += "<table class='information'>"
+        html += "<tr>"
+        html += "<td><strong>Error:</strong></td>"
+        html += "<td>{}</td>".format(self.error)
         html += "</tr>"
+        html += "<tr>"
+        html += "<td><strong>Location:</strong></td>"
+        html += "<td>{}:{}</td>".format(self.filename, self.line)
+        html += "</tr>"
+        html += "<tr>"
+        html += "<td><strong>Category:</strong></td>"
+        html += "<td><span class='label label-{}'>{}/{}</span></td>".format(self.get_category_label(),
+                                                                                 self.category,
+                                                                                 self.sub_category)
+        html += "</tr>"
+        html += "<tr>"
+        html += "<td><strong>Severity:</strong></td>"
+        html += "<td><span class='badge' style='background-color:{};'>{}</span></td>".format(self.get_severity_color(),
+                                                                                                  self.severity)
+        html += "</tr>"
+        html += "</table>"
+        html += "</div>"
+        html += "<div class='col-md-6'>"
+        html += "<pre>{0}</pre>".format(self.get_source())
+        html += "</div>"
+        html += "</div>"
+        html += "<hr />"
         return html
 
     def parseLine(self, line):
@@ -91,24 +156,11 @@ class ResultCollection:
     def html_table(self):
         html = ""
         if len(self.results) > 0:
-            html += "<table class='table grid'>"
-            html += "<thead>"
-            html += "<tr>"
-            html += "<th>Filename</th>"
-            html += "<th>Line</th>"
-            html += "<th>Error</th>"
-            html += "<th>Category</th>"
-            html += "<th>Sub Category</th>"
-            html += "<th>Severity</th>"
-            html += "</tr>"
-            html += "</thead>"
-            html += "<tbody>"
             for result in self.results:
                 html += result.html_row()
-            html += "</tbody>"
-            html += "<table>"
         else:
             html += "<p> Nothing to report.</p>"
+            html += "<hr />"
         return html
 
 class Page:
@@ -126,6 +178,9 @@ class Page:
         html += "<script src='../web/js/bootstrap.min.js'></script>"
         html += "</head>"
         html += "<body>"
+        html += "<style>"
+        html += ".information, td{padding:5px;}"
+        html += "</style>"
         html += "<div class='container'>"
         html += "<h1>cpplint.py</h1>"
         html += self.resultCollection.html_title()
@@ -136,7 +191,6 @@ class Page:
         html += "</body>"
         html += "</html>"
         return html
-
 
 f = open(sys.argv[1])
 lines = f.readlines()

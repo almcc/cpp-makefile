@@ -5,8 +5,6 @@ namespace alpha
 {
     class Calculator
     {
-        friend class CalculatorTest;
-
      public:
         Calculator();
         ~Calculator();

@@ -179,7 +179,7 @@ cpplint: $(SRC_DIR)/common/Release.h
 	                  --linelength=$(MAX_LINE_LENGHT) \
 	                  --filter=-legal,-whitespace/braces \
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
-	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt > $(RPT_DIR)cpplint-html/index.html
+	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
 
 oclint: $(SRC_DIR)/common/Release.h
 	@echo "Running oclint ..."
