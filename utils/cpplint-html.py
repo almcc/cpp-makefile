@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import re
+import sys
 
 class Line:
     def isOne(self, line):
@@ -34,8 +35,7 @@ class FileCollection:
        return html
 
     def html_table(self):
-        html = "<table>"
-        html += "<table class='table'>"
+        html = "<table class='table grid'>"
         html += "<thead>"
         html += "<tr>"
         html += "<th>Filename</th>"
@@ -89,23 +89,26 @@ class ResultCollection:
        return html
 
     def html_table(self):
-        html = "<table>"
-        html += "<table class='table'>"
-        html += "<thead>"
-        html += "<tr>"
-        html += "<th>Filename</th>"
-        html += "<th>Line</th>"
-        html += "<th>Error</th>"
-        html += "<th>Category</th>"
-        html += "<th>Sub Category</th>"
-        html += "<th>Severity</th>"
-        html += "</tr>"
-        html += "</thead>"
-        html += "<tbody>"
-        for result in self.results:
-            html += result.html_row()
-        html += "</tbody>"
-        html += "<table>"
+        html = ""
+        if len(self.results) > 0:
+            html += "<table class='table grid'>"
+            html += "<thead>"
+            html += "<tr>"
+            html += "<th>Filename</th>"
+            html += "<th>Line</th>"
+            html += "<th>Error</th>"
+            html += "<th>Category</th>"
+            html += "<th>Sub Category</th>"
+            html += "<th>Severity</th>"
+            html += "</tr>"
+            html += "</thead>"
+            html += "<tbody>"
+            for result in self.results:
+                html += result.html_row()
+            html += "</tbody>"
+            html += "<table>"
+        else:
+            html += "<p> Nothing to report.</p>"
         return html
 
 class Page:
@@ -119,7 +122,6 @@ class Page:
         html += "<title>cpplint.py</title>"
         html += "<link href='web/css/bootstrap.min.css' rel='stylesheet'>"
         html += "<link href='web/css/bootstrap-theme.min.css' rel='stylesheet'>"
-        html += "<link href='web/css/severity.css' rel='stylesheet'>"
         html += "<script src='web/js/jquery.min.js'></script>"
         html += "<script src='web/js/bootstrap.min.js'></script>"
         html += "</head>"
@@ -136,7 +138,7 @@ class Page:
         return html
 
 
-f = open("../rpt/cpplint.txt")
+f = open(sys.argv[1])
 lines = f.readlines()
 f.close() 
 

@@ -29,10 +29,8 @@ CC = g++
 CC_INCLUDES = -I$(SRC_DIR)common/ \
               -I$(TST_DIR)common/
 
-CC_FLAGS = -g -Wall -Weffc++
-LK_FLAGS =
-lcov: CC_FLAGS = -g -Wall -Weffc++ --coverage
-lcov: LK_FLAGS = --coverage
+CC_FLAGS = -g -Wall -Weffc++ --coverage
+LK_FLAGS = --coverage
 
 # (Required) Libraries
 # ==============================
@@ -103,7 +101,7 @@ clean: clean-cpp
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
 
-test: lcov cxxtest cppcheck vera cpplint
+test: cppcheck vera cpplint fresh cxxtest lcov  
 
 # Unit testing (CxxTest)
 # ==============================
@@ -161,12 +159,15 @@ vera: $(SRC_DIR)/common/Release.h
 	@cat $(RPT_DIR)vera.txt
 	
 cpplint:
-	@mkdir -p $(RPT_DIR)
 	@rm -f $(RPT_DIR)cpplint.txt
+	@rm -rf $(RPT_DIR)cpplint-html/
+	@mkdir -p $(RPT_DIR)cpplint-html/
 	@-utils/cpplint.py --extensions=h,cpp \
 	                  --linelength=$(MAX_LINE_LENGHT) \
 	                  --filter=-legal,-whitespace/braces \
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
+	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt > $(RPT_DIR)cpplint-html/index.html
+	@cp -r utils/web $(RPT_DIR)cpplint-html/
 
 # Installing & releasing
 # ==============================
