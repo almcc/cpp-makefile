@@ -19,6 +19,8 @@ BIN_DIR = bin/
 LIB_DIR = lib/
 DST_DIR = dst/
 RPT_DIR = rpt/
+SYS_DIR = sys/
+UTL_DIR = utils/
 
 VPATH = $(SRC_DIR) $(TST_DIR)
 
@@ -81,7 +83,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
+.PHONY : all fresh clean-cpp clean index test docs build cxxtest cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -98,12 +100,13 @@ clean-cpp:
 
 clean: clean-cpp
 	@echo "Cleaning everything else."
+	@find . -name '*.DS_Store' -type f -delete
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
 
-test: clean cppcheck vera cpplint oclint all cxxtest lizard flawfinder
+index:
 	@mkdir -p $(RPT_DIR)
-	@cp -r utils/web $(RPT_DIR)
+	@cp -r $(UTL_DIR)web $(RPT_DIR)
 	@jade --obj "{ 'name': '$(NAME)', \
 				   'major': '$(MAJOR)', \
 				   'minor': '$(MINOR)', \
@@ -112,7 +115,18 @@ test: clean cppcheck vera cpplint oclint all cxxtest lizard flawfinder
 				   'build': '$(BUILD)', \
 				   'version': '$(VERSION)', \
 				   'release': '$(RELEASE)' \
-				}" utils/index.jade -o rpt
+				}" $(UTL_DIR)index.jade -o rpt
+
+test: clean cppcheck vera cpplint oclint all cxxtest lizard flawfinder index
+
+docs: index
+	@cp Doxyfile Doxyfile.filled
+	@echo "PROJECT_NAME = $(shell echo $(NAME) | tr a-z A-Z)" >> Doxyfile.filled
+	@echo "PROJECT_NUMBER = $(RELEASE)" >> Doxyfile.filled
+	@doxygen Doxyfile.filled
+	@rm -f Doxyfile.filled
+
+build: test docs dist
 
 # Unit testing (CxxTest)
 # ==============================
@@ -123,8 +137,8 @@ cxxtest: $(TST_RUNNER_BIN)
 	@lcov --directory . --zerocounters
 	@$(TST_RUNNER_BIN)
 	@mv $(TST_XML_OUT) $(RPT_DIR)
-	@xsltproc utils/xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
-	@cp utils/web/js/jquery.min.js $(RPT_DIR)/cxxtest-html/
+	@xsltproc $(UTL_DIR)xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
+	@cp $(UTL_DIR)web/js/jquery.min.js $(RPT_DIR)/cxxtest-html/
 	@mkdir -p $(RPT_DIR)
 	@lcov --base-directory . --directory . --capture --output-file $(RPT_DIR)coverage.info
 	@lcov --remove $(RPT_DIR)coverage.info  "/usr*" -o $(RPT_DIR)coverage.info
@@ -139,7 +153,7 @@ cppcheck: $(SRC_DIR)/common/Release.h
 	@mkdir -p $(RPT_DIR)
 	@rm -rf $(RPT_DIR)cppcheck-html
 	@cppcheck --quiet --enable=all --xml --suppress=missingIncludeSystem $(CC_INCLUDES) $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck.xml
-	@utils/cppcheck-htmlreport --file=$(RPT_DIR)cppcheck.xml --report-dir=$(RPT_DIR)cppcheck-html --source-dir=.
+	@$(UTL_DIR)cppcheck-htmlreport --file=$(RPT_DIR)cppcheck.xml --report-dir=$(RPT_DIR)cppcheck-html --source-dir=.
 
 vera: $(SRC_DIR)/common/Release.h
 	@echo "Running vera ..."
@@ -175,11 +189,13 @@ cpplint: $(SRC_DIR)/common/Release.h
 	@rm -f $(RPT_DIR)cpplint.txt
 	@rm -rf $(RPT_DIR)cpplint-html/
 	@mkdir -p $(RPT_DIR)cpplint-html/
-	@-utils/cpplint.py --extensions=h,cpp \
+	@cp -r $(UTL_DIR)web $(RPT_DIR)
+	@-$(UTL_DIR)cpplint.py --root=src \
+	                  --extensions=h,cpp \
 	                  --linelength=$(MAX_LINE_LENGHT) \
 	                  --filter=-legal,-whitespace/braces \
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
-	@utils/cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
+	@$(UTL_DIR)cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
 
 oclint: $(SRC_DIR)/common/Release.h
 	@echo "Running oclint ..."
@@ -213,9 +229,10 @@ uninstall:
 	rm -rf $(DESTDIR)/etc/$(NAME)
 	rm -rf $(DESTDIR)/etc/init.d/$(NAME)
 
-dist:
+dist: clean
 	@echo "Making distribution"
 	@mkdir -p $(DST_DIR)
+	@mkdir -p $(SYS_DIR)
 	@mkdir -p $(RELEASE)/
 	@cp -r $(SRC_DIR)/ $(RELEASE)/
 	@cp -r $(SYS_DIR)/ $(RELEASE)/
@@ -225,9 +242,9 @@ dist:
 
 # Making release header file
 # ==============================
-$(SRC_DIR)/common/Release.h:
-	@echo '#ifndef SRC_COMMON_RELEASE_H_' > $(SRC_DIR)/common/Release.h
-	@echo '#define SRC_COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
+$(SRC_DIR)/common/Release.h: Makefile
+	@echo '#ifndef COMMON_RELEASE_H_' > $(SRC_DIR)/common/Release.h
+	@echo '#define COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
 	@echo '#include <string>' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
@@ -240,7 +257,7 @@ $(SRC_DIR)/common/Release.h:
 	@echo 'const std::string VERSION = "$(VERSION)";' >> $(SRC_DIR)/common/Release.h
 	@echo 'const std::string RELEASE = "$(RELEASE)";' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
-	@echo '#endif  // SRC_COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
+	@echo '#endif  // COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
 
 # Linking
 # ==============================

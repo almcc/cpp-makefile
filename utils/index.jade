@@ -13,30 +13,44 @@ html
                 h1 #{release}
 
             div.page-header
+                h3 Documentation
+            ul
+                li
+                    h4
+                        a(href="doxygen/html/index.html") Doxygen
+
+            div.page-header
+                h3 Distribution
+            ul
+                li
+                    h4
+                        a(href="../dst/#{release}-dist.tar.gz") #{release}-dist.tar.gz
+
+            div.page-header
                 h3 Testing reports
             ul
                 li
                     h4
-                        a(href="cxxtest-html/index.html") cxxtest test report.
+                        a(href="cxxtest-html/index.html") CxxTest test report
                 li
                     h4
-                        a(href="coverage-html/index.html") cxxtest test coverage report.
+                        a(href="coverage-html/index.html") CxxTest test coverage report
 
             div.page-header
                 h3 Linting reports
             ul
                 li
                     h4
-                        a(href="cpplint-html/index.html") cpplint.py report. 
+                        a(href="cpplint-html/index.html") cpplint.py report
                 li
                     h4
-                        a(href="cppcheck-html/index.html") cppcheck report. 
+                        a(href="cppcheck-html/index.html") CppCheck report
                 li
                     h4
-                        a(href="oclint-html/index.html") oclint report.
+                        a(href="oclint-html/index.html") Oclint report
                 li
                     h4
-                        a(href="lizard-report.txt") lizard report.
+                        a(href="lizard-report.txt") Lizard report
                 li
                     h4
-                        a(href="flawfinder-html/index.html") flawfinder report.
+                        a(href="flawfinder-html/index.html") Flawfinder report

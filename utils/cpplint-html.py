@@ -60,7 +60,7 @@ class FileCollection:
 
 class Result(Line):
     def __init__(self):
-        self.regex = re.compile("(.*):(.*):(.*)\[(.*)\/(.*)\].*\[(.*)\]")
+        self.regex = re.compile("(.*):([0-9]*):[ ]+(.*)\[(.*)\/(.*)\].*\[([0-5]*)\]")
         self.filename = ""
         self.line = 0
         self.error = ""

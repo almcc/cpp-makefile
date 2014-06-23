@@ -1,5 +1,5 @@
-#ifndef SRC_COMMON_ALPHA_CALCULATOR_H_
-#define SRC_COMMON_ALPHA_CALCULATOR_H_
+#ifndef COMMON_ALPHA_CALCULATOR_H_
+#define COMMON_ALPHA_CALCULATOR_H_
 
 namespace alpha
 {
@@ -13,4 +13,4 @@ namespace alpha
     };
 }  // namespace alpha
 
-#endif  // SRC_COMMON_ALPHA_CALCULATOR_H_
+#endif  // COMMON_ALPHA_CALCULATOR_H_
