@@ -4,23 +4,19 @@
 #include <cxxtest/TestSuite.h>
 #include <alpha/Calculator.h>
 
-class CalculatorTestSuite : public CxxTest::TestSuite
-{
+class CalculatorTestSuite : public CxxTest::TestSuite {
  public:
-    void setUp(void)
-    {
+    void setUp() {
         this->calc = new alpha::Calculator();
     }
 
-    void testAddition(void)
-    {
+    void testAddition() {
         alpha::Calculator calc;
         TS_ASSERT_EQUALS(calc.add(1, 1), 2);
         TS_ASSERT_EQUALS(calc.add(1, -1), 0);
     }
 
-    void tearDown(void)
-    {
+    void tearDown() {
         delete this->calc;
     }
 

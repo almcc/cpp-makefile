@@ -3,8 +3,7 @@
 
 using alpha::Calculator;
 
-int main()
-{
+int main() {
     Calculator calc;
     return calc.add(1, -1);
 }

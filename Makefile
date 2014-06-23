@@ -177,13 +177,12 @@ vera: $(SRC_DIR)/common/Release.h
 	@vera++ -rule T008 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Keywords catch, for, if, switch and while should be followed by a single space
 	@vera++ -rule T009 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Comma should not be preceded by whitespace, but should be followed by one
 	@vera++ -rule T010 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Identifiers should not be composed of 'l' and 'O' characters only
-	@vera++ -rule T011 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Curly brackets from the same pair should be either in the same line or in the same column
 	@vera++ -rule T012 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Negation operator should not be used in its short form
 	@vera++ -rule T017 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Unnamed namespaces are not allowed in header files
 	@vera++ -rule T018 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Using namespace is not allowed in header files
 	@vera++ -rule T019 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Control structures should have complete curly-braced block of code
 	@cat $(RPT_DIR)vera.txt
-	
+
 cpplint: $(SRC_DIR)/common/Release.h
 	@echo "Running cpplint ..."
 	@rm -f $(RPT_DIR)cpplint.txt
@@ -193,7 +192,7 @@ cpplint: $(SRC_DIR)/common/Release.h
 	@-$(UTL_DIR)cpplint.py --root=src \
 	                  --extensions=h,cpp \
 	                  --linelength=$(MAX_LINE_LENGHT) \
-	                  --filter=-legal,-whitespace/braces \
+	                  --filter=-legal \
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
 	@$(UTL_DIR)cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
 
