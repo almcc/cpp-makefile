@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title Title
+        title #{release}
         link(href='web/css/bootstrap.min.css', rel='stylesheet')
         link(href='web/css/bootstrap-theme.min.css', rel='stylesheet')
         script(src='web/js/jquery.min.js')
@@ -10,7 +10,7 @@ html
     body
         div.container
             div.page-header
-                h1 #{release} 
+                h1 #{release}
 
             div.page-header
                 h3 Testing reports
@@ -34,3 +34,6 @@ html
                 li
                     h4
                         a(href="oclint-html/index.html") oclint report.
+                li
+                    h4
+                        a(href="lizard-report.txt") lizard report.

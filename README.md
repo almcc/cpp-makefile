@@ -15,13 +15,14 @@ Make Targets
 - `make fresh` Equivalient to 'make clean all'.
 - `make clean-cpp` Removes all compiles cpp artifacts.
 - `make clean` Removes all none source files.
-- `make test` Runs cxxtest, lcov, cppcheck, vera and cpplint.
+- `make test` Runs fresh, cxxtest, lcov, cppcheck, vera, cpplint, oclint and lizard.
 - `make cxxtest` Makes the cxxtest executable, runs it and produces XML & HTML output..
 - `make lcov` Runs a line coverage report, (after running the tests again) and generates an HTML report.
 - `make cppcheck` Runs cppcheck over code, outputs a text file and cats to screen.
 - `make vera` Runs vera++ with most rules enabled, creates text report. 
 - `make cpplint` Runs cpplint and creates text and html reports. Run utils/cpplint.py --filter= for a list of checks to filter. 
 - `make oclint` Runs oclint and produces an html report. 
+- `make lizard` Runs the lizard.py Cyclomatic Complexity Analyzer and produces a text report.
 - `make install` Installs files, base directory defined by DESTDIR variable.
 - `make uninstall` Un-installs all files, base directory defined by DESTDIR variable.
 - `make dist` Makes a tar.gz file for distribution.

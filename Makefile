@@ -81,7 +81,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint install uninstall dist
+.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint lizard install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -101,7 +101,7 @@ clean: clean-cpp
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
 
-test: clean cppcheck vera cpplint oclint all cxxtest  
+test: clean cppcheck vera cpplint oclint all cxxtest lizard
 	@mkdir -p $(RPT_DIR)
 	@cp -r utils/web $(RPT_DIR)
 	@jade --obj "{ 'name': '$(NAME)', \
@@ -186,6 +186,12 @@ oclint: $(SRC_DIR)/common/Release.h
 	@rm -rf $(RPT_DIR)oclint-html/
 	@mkdir -p $(RPT_DIR)oclint-html/
 	@oclint -report-type html -o $(RPT_DIR)oclint-html/index.html $(SRCS) -- -c $(CC_FLAGS) $(CC_INCLUDES)
+
+lizard: $(SRC_DIR)/common/Release.h
+	@echo "Running lizard ..."
+	@rm -f $(RPT_DIR)lizard-report.*
+	@mkdir -p $(RPT_DIR)
+	@lizard $(SRCS) $(TST_SRCS) > $(RPT_DIR)lizard-report.txt
 
 # Installing & releasing
 # ==============================

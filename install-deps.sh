@@ -1,8 +1,8 @@
 #!/bin/bash
 sudo apt-get update
-sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm
+sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm python-pip
 sudo npm install jade --global
-
+sudo pip install lizard
 mkdir -p ~/stage
 pushd ~/stage
 wget http://archives.oclint.org/releases/0.7/oclint-0.7-x86_64-linux-ubuntu-12.04.tar.gz
