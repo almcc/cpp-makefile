@@ -29,7 +29,7 @@ CC = g++
 CC_INCLUDES = -I$(SRC_DIR)common/ \
               -I$(TST_DIR)common/
 
-CC_FLAGS = -g -Wall -Weffc++ --coverage
+CC_FLAGS = -g -O3 -std=c++11 -Wpedantic -Wall -Wextra -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow --coverage
 LK_FLAGS = --coverage
 
 # (Required) Libraries
@@ -81,7 +81,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint lizard install uninstall dist
+.PHONY : all fresh clean-cpp clean test cxxtest cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -101,7 +101,7 @@ clean: clean-cpp
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
 
-test: clean cppcheck vera cpplint oclint all cxxtest lizard
+test: clean cppcheck vera cpplint oclint all cxxtest lizard flawfinder
 	@mkdir -p $(RPT_DIR)
 	@cp -r utils/web $(RPT_DIR)
 	@jade --obj "{ 'name': '$(NAME)', \
@@ -192,6 +192,12 @@ lizard: $(SRC_DIR)/common/Release.h
 	@rm -f $(RPT_DIR)lizard-report.*
 	@mkdir -p $(RPT_DIR)
 	@lizard $(SRCS) $(TST_SRCS) > $(RPT_DIR)lizard-report.txt
+
+flawfinder: $(SRC_DIR)/common/Release.h
+	@echo "Running flawfinder ..."
+	@rm -rf $(RPT_DIR)flawfinder-html/
+	@mkdir -p $(RPT_DIR)flawfinder-html/
+	@flawfinder --context --html $(SRCS) $(HEADERS) $(TST_SRCS) > $(RPT_DIR)flawfinder-html/index.html
 
 # Installing & releasing
 # ==============================

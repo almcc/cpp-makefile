@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get update
-sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm python-pip
+sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm python-pip flawfinder
 sudo npm install jade --global
 sudo pip install lizard
 mkdir -p ~/stage
