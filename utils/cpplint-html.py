@@ -2,19 +2,22 @@
 
 import re
 import sys
+import cgi
 
 src_dir = sys.argv[2] + "/"
 def get_lines_of_file(filename, line_number, buffer):
     f = open(filename)
     alllines = [x[:-1] for x in f.readlines()]
-    f.close() 
+    f.close()
     lines = []
     for index, line in enumerate(alllines):
         start = line_number - buffer
         finish = line_number + buffer
         current_line_num = index + 1
-        if current_line_num >= start and current_line_num <= finish:            
-            lines.append("{:0>3}: {}".format(current_line_num, line))
+        if current_line_num >= start and current_line_num <= finish:
+            bad_line = "{:0>3}: {}".format(current_line_num, line)
+            html_line = cgi.escape(bad_line)
+            lines.append(html_line)
     return lines
 
 class Line:
@@ -168,7 +171,7 @@ class Page:
         self.fileCollection = fileCollection
         self.resultCollection = resultCollection
 
-    def html(self): 
+    def html(self):
         html = "<html>"
         html += "<head>"
         html += "<title>cpplint.py</title>"
@@ -194,13 +197,13 @@ class Page:
 
 f = open(sys.argv[1])
 lines = f.readlines()
-f.close() 
+f.close()
 
 files = []
 results = []
 for line in lines:
     line = line[:-1]
-    
+
     file = File()
     if file.isOne(line):
         file.parseLine(line)
@@ -210,9 +213,8 @@ for line in lines:
     if result.isOne(line):
         result.parseLine(line)
         results.append(result)
- 
+
 fileCollection = FileCollection(files)
 resultCollection = ResultCollection(results)
 page = Page(fileCollection, resultCollection)
 print(page.html())
- 
