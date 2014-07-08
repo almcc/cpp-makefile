@@ -7,3 +7,4 @@ rpt/
 *.gcda
 cxxtest.xml
 *.DS_Store
+release/
