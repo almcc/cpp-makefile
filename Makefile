@@ -83,7 +83,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean index test docs build cxxtest cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
+.PHONY : all fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -117,7 +117,7 @@ index:
 				   'release': '$(RELEASE)' \
 				}" $(UTL_DIR)index.jade -o rpt
 
-test: clean cppcheck vera cpplint oclint all cxxtest lizard flawfinder index
+test: clean cppcheck vera cpplint oclint all cxxtest valgrind lizard flawfinder index
 
 docs: index
 	@cp Doxyfile Doxyfile.filled
