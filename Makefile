@@ -30,10 +30,14 @@ VPATH = $(SRC_DIR) $(TST_DIR)
 CC = /opt/rh/devtoolset-2/root/usr/bin/g++
 CC_INCLUDES = -I$(SRC_DIR)common/ \
               -I$(TST_DIR)common/
-GCOV = /opt/rh/devtoolset-2/root/usr/bin/gcov
 
 CC_FLAGS = -g -O3 -std=c++11 -Wpedantic -Wall -Wextra -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow --coverage
 LK_FLAGS = --coverage
+
+# Tools
+# ==============================
+GCOV = /opt/rh/devtoolset-2/root/usr/bin/gcov
+LIZARD = /usr/local/bin/lizard
 
 # (Required) Libraries
 # ==============================
@@ -180,7 +184,7 @@ lizard: $(SRC_DIR)/common/Release.h
 	@echo "Running lizard ..."
 	@rm -f $(RPT_DIR)lizard-report.*
 	@mkdir -p $(RPT_DIR)
-	@lizard $(SRCS) $(TST_SRCS) > $(RPT_DIR)lizard-report.txt
+	@$(LIZARD) $(SRCS) $(TST_SRCS) > $(RPT_DIR)lizard-report.txt
 
 # Installing & releasing
 # ==============================
