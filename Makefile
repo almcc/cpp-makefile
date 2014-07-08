@@ -27,9 +27,10 @@ VPATH = $(SRC_DIR) $(TST_DIR)
 # Compiler Settings
 # ==============================
 
-CC = g++
+CC = /opt/rh/devtoolset-2/root/usr/bin/g++
 CC_INCLUDES = -I$(SRC_DIR)common/ \
               -I$(TST_DIR)common/
+GCOV = /opt/rh/devtoolset-2/root/usr/bin/gcov
 
 CC_FLAGS = -g -O3 -std=c++11 -Wpedantic -Wall -Wextra -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow --coverage
 LK_FLAGS = --coverage
@@ -83,7 +84,7 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck vera cpplint oclint lizard flawfinder install uninstall dist
+.PHONY : all fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck cpplint lizard install uninstall dist
 
 all: $(BIN_DIR)$(NAME)
 
@@ -117,7 +118,7 @@ index:
 				   'release': '$(RELEASE)' \
 				}" $(UTL_DIR)index.jade -o rpt
 
-test: clean cppcheck vera cpplint oclint all cxxtest valgrind lizard flawfinder index
+test: clean cppcheck cpplint all cxxtest valgrind lizard index
 
 docs: index
 	@cp Doxyfile Doxyfile.filled
@@ -134,15 +135,15 @@ build: test docs dist
 cxxtest: $(TST_RUNNER_BIN)
 	@echo "Running cxxtest ..."
 	@mkdir -p $(RPT_DIR)/cxxtest-html/
-	@lcov --directory . --zerocounters
+	@lcov --gcov-tool $(GCOV) --directory . --zerocounters
 	@$(TST_RUNNER_BIN)
 	@mv $(TST_XML_OUT) $(RPT_DIR)
 	@xsltproc $(UTL_DIR)xunit-to-html.xslt $(RPT_DIR)$(TST_XML_OUT) > $(RPT_DIR)/cxxtest-html/index.html
 	@cp $(UTL_DIR)web/js/jquery.min.js $(RPT_DIR)/cxxtest-html/
 	@mkdir -p $(RPT_DIR)
-	@lcov --base-directory . --directory . --capture --output-file $(RPT_DIR)coverage.info
-	@lcov --remove $(RPT_DIR)coverage.info  "/usr*" -o $(RPT_DIR)coverage.info
-	@lcov --remove $(RPT_DIR)coverage.info  "tst/*" -o $(RPT_DIR)coverage.info
+	@lcov --gcov-tool $(GCOV) --base-directory . --directory . --capture --output-file $(RPT_DIR)coverage.info
+	@lcov --gcov-tool $(GCOV) --remove $(RPT_DIR)coverage.info  "/usr*" -o $(RPT_DIR)coverage.info
+	@lcov --gcov-tool $(GCOV) --remove $(RPT_DIR)coverage.info  "tst/*" -o $(RPT_DIR)coverage.info
 	@genhtml $(RPT_DIR)coverage.info --output-directory $(RPT_DIR)coverage-html
 
 valgrind: $(TST_RUNNER_BIN)
@@ -162,34 +163,6 @@ cppcheck: $(SRC_DIR)/common/Release.h
 	@cppcheck --quiet --enable=all --xml --suppress=missingIncludeSystem $(CC_INCLUDES) $(SRCS) $(HEADERS) 2> $(RPT_DIR)cppcheck.xml
 	@$(UTL_DIR)cppcheck-htmlreport --file=$(RPT_DIR)cppcheck.xml --report-dir=$(RPT_DIR)cppcheck-html --source-dir=.
 
-vera: $(SRC_DIR)/common/Release.h
-	@echo "Running vera ..."
-	@mkdir -p $(RPT_DIR)
-	@rm -f $(RPT_DIR)vera.txt
-	@vera++ -rule F001 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Source files should not use the '\r' (CR) character
-	@vera++ -rule F002 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # File names should be well-formed
-	@vera++ -rule L001 -param strict-trailing-space=0 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # No trailing whitespace
-	@vera++ -rule L002 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Don't use tab characters
-	@vera++ -rule L003 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # No leading and no trailing empty lines
-	@vera++ -rule L004 -param max-line-length=$(MAX_LINE_LENGHT) $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Line cannot be too long
-	@vera++ -rule L005 -param max-consecutive-empty-lines=2 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # There should not be too many consecutive empty lines
-	@vera++ -rule L006 -param max-file-length=1000 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Source file should not be too long
-	@vera++ -rule T001 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # One-line comments should not have forced continuation
-	@vera++ -rule T002 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Reserved names should not be used for preprocessor macros
-	@vera++ -rule T003 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Some keywords should be followed by a single space
-	@vera++ -rule T004 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Some keywords should be immediately followed by a colon
-	@vera++ -rule T005 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Keywords break and continue should be immediately followed by a semicolon
-	@vera++ -rule T006 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Keywords return and throw should be immediately followed by a semicolon or a single space
-	@vera++ -rule T007 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Semicolons should not be isolated by spaces or comments from the rest of the code
-	@vera++ -rule T008 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Keywords catch, for, if, switch and while should be followed by a single space
-	@vera++ -rule T009 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Comma should not be preceded by whitespace, but should be followed by one
-	@vera++ -rule T010 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Identifiers should not be composed of 'l' and 'O' characters only
-	@vera++ -rule T012 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Negation operator should not be used in its short form
-	@vera++ -rule T017 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Unnamed namespaces are not allowed in header files
-	@vera++ -rule T018 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Using namespace is not allowed in header files
-	@vera++ -rule T019 $(SRCS) $(HEADERS) $(TST_SRCS) 2>> $(RPT_DIR)vera.txt # Control structures should have complete curly-braced block of code
-	@cat $(RPT_DIR)vera.txt
-
 cpplint: $(SRC_DIR)/common/Release.h
 	@echo "Running cpplint ..."
 	@rm -f $(RPT_DIR)cpplint.txt
@@ -203,23 +176,11 @@ cpplint: $(SRC_DIR)/common/Release.h
 	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
 	@$(UTL_DIR)cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
 
-oclint: $(SRC_DIR)/common/Release.h
-	@echo "Running oclint ..."
-	@rm -rf $(RPT_DIR)oclint-html/
-	@mkdir -p $(RPT_DIR)oclint-html/
-	@oclint -report-type html -o $(RPT_DIR)oclint-html/index.html $(SRCS) -- -c $(CC_FLAGS) $(CC_INCLUDES)
-
 lizard: $(SRC_DIR)/common/Release.h
 	@echo "Running lizard ..."
 	@rm -f $(RPT_DIR)lizard-report.*
 	@mkdir -p $(RPT_DIR)
 	@lizard $(SRCS) $(TST_SRCS) > $(RPT_DIR)lizard-report.txt
-
-flawfinder: $(SRC_DIR)/common/Release.h
-	@echo "Running flawfinder ..."
-	@rm -rf $(RPT_DIR)flawfinder-html/
-	@mkdir -p $(RPT_DIR)flawfinder-html/
-	@flawfinder --context --html $(SRCS) $(HEADERS) $(TST_SRCS) > $(RPT_DIR)flawfinder-html/index.html
 
 # Installing & releasing
 # ==============================

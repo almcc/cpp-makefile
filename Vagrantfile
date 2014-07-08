@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
-    config.vm.box = "Ubuntu-13.10-x86_64"
+    config.vm.box = "CentOS-6.5-x86_64"
     config.vm.synced_folder ".", "/home/vagrant/git/cpp-makefile"
     config.vm.network "forwarded_port", guest: 8080, host: 8080
 end
