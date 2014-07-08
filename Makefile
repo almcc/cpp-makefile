@@ -149,8 +149,8 @@ valgrind: $(TST_RUNNER_BIN)
 	@echo "Running valgrind ..."
 	@rm -f $(RPT_DIR)valgrind-report.*
 	@mkdir -p $(RPT_DIR)
-	@valgrind --tool=memcheck --xml=yes --xml-file=$(RPT_DIR)valgrind-report.xml $(TST_RUNNER_BIN)
-	@valgrind --tool=memcheck $(TST_RUNNER_BIN) 2> $(RPT_DIR)valgrind-report.txt
+	@valgrind --tool=memcheck --xml=yes --xml-file=$(RPT_DIR)valgrind-memcheck-report.xml $(TST_RUNNER_BIN)
+	@valgrind --tool=helgrind --xml=yes --xml-file=$(RPT_DIR)valgrind-helgrind-report.xml $(TST_RUNNER_BIN)
 
 # Static analysis
 # ==============================
