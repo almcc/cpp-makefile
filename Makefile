@@ -145,6 +145,13 @@ cxxtest: $(TST_RUNNER_BIN)
 	@lcov --remove $(RPT_DIR)coverage.info  "tst/*" -o $(RPT_DIR)coverage.info
 	@genhtml $(RPT_DIR)coverage.info --output-directory $(RPT_DIR)coverage-html
 
+valgrind: $(TST_RUNNER_BIN)
+	@echo "Running valgrind ..."
+	@rm -f $(RPT_DIR)valgrind-report.*
+	@mkdir -p $(RPT_DIR)
+	@valgrind --tool=memcheck --xml=yes --xml-file=$(RPT_DIR)valgrind-report.xml $(TST_RUNNER_BIN)
+	@valgrind --tool=memcheck $(TST_RUNNER_BIN) 2> $(RPT_DIR)valgrind-report.txt
+
 # Static analysis
 # ==============================
 

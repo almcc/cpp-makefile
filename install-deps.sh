@@ -5,7 +5,7 @@ wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key 
 sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
 
-sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm python-pip flawfinder doxygen graphviz vim openjdk-7-jre openjdk-7-jdk jenkins jenkins-cli
+sudo apt-get install git unzip make g++ cppcheck xsltproc tree apt-file lcov python-pygments cxxtest vera++ nodejs nodejs-legacy npm python-pip flawfinder doxygen graphviz vim openjdk-7-jre openjdk-7-jdk jenkins jenkins-cli valgrind
 
 sudo npm install jade --global
 
