@@ -63,5 +63,3 @@ if confirm == 'y':
   updateMakefileVariable("FIX", fix)
   updateMakefileVariable("LABEL", label)
   updateMakefileVariable("BUILD", build)
-  call(["make", "dist"])
-
