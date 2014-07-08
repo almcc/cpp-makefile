@@ -38,6 +38,7 @@ LK_FLAGS = --coverage
 # ==============================
 GCOV = /opt/rh/devtoolset-2/root/usr/bin/gcov
 LIZARD = /usr/local/bin/lizard
+DOXYGEN = /usr/local/bin/doxygen
 
 # (Required) Libraries
 # ==============================
@@ -128,7 +129,7 @@ docs: index
 	@cp Doxyfile Doxyfile.filled
 	@echo "PROJECT_NAME = $(shell echo $(NAME) | tr a-z A-Z)" >> Doxyfile.filled
 	@echo "PROJECT_NUMBER = $(RELEASE)" >> Doxyfile.filled
-	@doxygen Doxyfile.filled
+	@$(DOXYGEN) Doxyfile.filled
 	@rm -f Doxyfile.filled
 
 build: test docs dist
