@@ -174,11 +174,11 @@ cpplint: $(SRC_DIR)/common/Release.h
 	@rm -rf $(RPT_DIR)cpplint-html/
 	@mkdir -p $(RPT_DIR)cpplint-html/
 	@cp -r $(UTL_DIR)web $(RPT_DIR)
-	@-$(UTL_DIR)cpplint.py --root=src \
-	                  --extensions=h,cpp \
-	                  --linelength=$(MAX_LINE_LENGHT) \
-	                  --filter=-legal \
-	                  $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
+	@-$(UTL_DIR)cpplint.py --root=source \
+	                       --extensions=h,cpp \
+	                       --linelength=$(MAX_LINE_LENGHT) \
+	                       --filter=-legal \
+	                       $(SRCS) $(HEADERS) $(TST_SRCS) 2> $(RPT_DIR)cpplint.txt
 	@$(UTL_DIR)cpplint-html.py $(RPT_DIR)cpplint.txt . > $(RPT_DIR)cpplint-html/index.html
 
 lizard: $(SRC_DIR)/common/Release.h
@@ -215,8 +215,8 @@ dist: clean
 # Making release header file
 # ==============================
 $(SRC_DIR)/common/Release.h: Makefile
-	@echo '#ifndef COMMON_RELEASE_H_' > $(SRC_DIR)/common/Release.h
-	@echo '#define COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
+	@echo '#ifndef SRC_COMMON_RELEASE_H_' > $(SRC_DIR)/common/Release.h
+	@echo '#define SRC_COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
 	@echo '#include <string>' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
@@ -229,7 +229,7 @@ $(SRC_DIR)/common/Release.h: Makefile
 	@echo 'const std::string VERSION = "$(VERSION)";' >> $(SRC_DIR)/common/Release.h
 	@echo 'const std::string RELEASE = "$(RELEASE)";' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
-	@echo '#endif  // COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
+	@echo '#endif  // SRC_COMMON_RELEASE_H_' >> $(SRC_DIR)/common/Release.h
 
 # Linking
 # ==============================

@@ -1,5 +1,5 @@
-#ifndef COMMON_ALPHA_CALCULATOR_H_
-#define COMMON_ALPHA_CALCULATOR_H_
+#ifndef SRC_COMMON_ALPHA_CALCULATOR_H_
+#define SRC_COMMON_ALPHA_CALCULATOR_H_
 
 namespace alpha {
     class Calculator {
@@ -17,4 +17,4 @@ namespace alpha {
     };
 }  // namespace alpha
 
-#endif  // COMMON_ALPHA_CALCULATOR_H_
+#endif  // SRC_COMMON_ALPHA_CALCULATOR_H_

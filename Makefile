@@ -18,6 +18,11 @@ WD=$(shell pwd)
 release: clean
 	@mkdir -p release/
 
+	@$(MAKE) -C source/ test docs NAME=$(NAME) MAJOR=$(MAJOR) MINOR=$(MINOR) FIX=$(FIX) LABEL=$(LABEL) BUILD=$(BUILD)
+	cp -r source/rpt release/$(RELEASE)-rpt
+	@cd release/; tar cvzf $(RELEASE)-rpt.tar.gz $(RELEASE)-rpt/*
+	@rm -rf release/$(RELEASE)-rpt
+
 	@$(MAKE) -C source/ dist NAME=$(NAME) MAJOR=$(MAJOR) MINOR=$(MINOR) FIX=$(FIX) LABEL=$(LABEL) BUILD=$(BUILD)
 	@mkdir -p rpmbuild/SOURCES/
 	@cp source/dst/* release/
