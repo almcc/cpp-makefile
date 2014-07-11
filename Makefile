@@ -18,7 +18,7 @@ release: clean
 	@mkdir -p release/
 
 	@$(MAKE) -C source/ test docs MAJOR=$(MAJOR) MINOR=$(MINOR) FIX=$(FIX) LABEL=$(LABEL) BUILD=$(BUILD)
-	cp -r source/rpt release/$(RELEASE)-rpt
+	@cp -r source/rpt release/$(RELEASE)-rpt
 	@cd release/; tar cvzf $(RELEASE)-rpt.tar.gz $(RELEASE)-rpt/*
 	@rm -rf release/$(RELEASE)-rpt
 
@@ -41,7 +41,7 @@ release: clean
 	@cp rpmbuild/RPMS/*/* release/
 	@cp rpmbuild/SRPMS/* release/
 
-	ls -hl release/
+	@ls -hl release/
 
 clean:
 	@$(MAKE) -C source/ clean
