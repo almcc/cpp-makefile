@@ -16,7 +16,7 @@ sudo yum clean all
 
 # packages
 sudo yum groupinstall -y development
-sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel
+sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel texlive-latex
 
 # lcov
 wget http://downloads.sourceforge.net/ltp/lcov-1.11-1.noarch.rpm
@@ -84,6 +84,12 @@ sudo /usr/local/bin/pip2.7 install lizard
 
 # jade
 sudo npm install jade --global
+
+# sphinx
+pushd /tmp # Can't run this in a directory with a child directroy named sphinx
+sudo /usr/local/bin/easy_install-2.7 -U Sphinx
+sudo /usr/local/bin/pip2.7 install sphinx_rtd_theme
+popd
 
 # starting services
 sudo service jenkins start

@@ -22,6 +22,8 @@ rpms:
 	                                                                 --define 'release_label $(LABEL)$(BUILD)'
 	@rpmbuild --define '_topdir $(WD)' --clean -bb SPECS/alpha-puppet.spec  --define 'version $(VERSION)' \
 	                                                                        --define 'release_label $(LABEL)$(BUILD)'
+	@rpmbuild --define '_topdir $(WD)' --clean -bb SPECS/alpha-sphinx.spec  --define 'version $(VERSION)' \
+	                                                                        --define 'release_label $(LABEL)$(BUILD)'
 
 clean:
 	@rm -rf BUILD

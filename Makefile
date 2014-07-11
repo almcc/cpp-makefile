@@ -30,8 +30,13 @@ release: clean
 	@mkdir -p rpmbuild/SOURCES/
 	@cp puppet/dst/* release/
 
+	@$(MAKE) -C sphinx/ dist MAJOR=$(MAJOR) MINOR=$(MINOR) FIX=$(FIX) LABEL=$(LABEL) BUILD=$(BUILD)
+	@mkdir -p rpmbuild/SOURCES/
+	@cp sphinx/dst/* release/
+
 	@cp source/dst/* rpmbuild/SOURCES/
 	@cp puppet/dst/* rpmbuild/SOURCES/
+	@cp sphinx/dst/* rpmbuild/SOURCES/
 	@$(MAKE) -C rpmbuild/ rpms MAJOR=$(MAJOR) MINOR=$(MINOR) FIX=$(FIX) LABEL=$(LABEL) BUILD=$(BUILD)
 	@cp rpmbuild/RPMS/*/* release/
 	@cp rpmbuild/SRPMS/* release/
@@ -42,4 +47,5 @@ clean:
 	@$(MAKE) -C source/ clean
 	@$(MAKE) -C puppet/ clean
 	@$(MAKE) -C rpmbuild/ clean
+	@$(MAKE) -C sphinx/ clean
 	@rm -rf release/
