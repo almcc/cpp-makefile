@@ -7,7 +7,7 @@ FIX = X
 LABEL = dev
 BUILD = X
 VERSION = $(MAJOR).$(MINOR).$(FIX)
-RELEASE = $(NAME)-$(VERSION)-$(LABEL)$(BUILD)
+RELEASE = alpha-$(VERSION)-$(LABEL)$(BUILD)
 
 # Helpers
 # ==============================
@@ -19,8 +19,9 @@ WD=$(shell pwd)
 
 rpms:
 	@rpmbuild --define '_topdir $(WD)' --clean -ba SPECS/alpha.spec  --define 'version $(VERSION)' \
-	                                                                 --define 'name $(NAME)' \
 	                                                                 --define 'release_label $(LABEL)$(BUILD)'
+	@rpmbuild --define '_topdir $(WD)' --clean -bb SPECS/alpha-puppet.spec  --define 'version $(VERSION)' \
+	                                                                        --define 'release_label $(LABEL)$(BUILD)'
 
 clean:
 	@rm -rf BUILD

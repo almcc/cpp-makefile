@@ -1,13 +1,12 @@
 # Release Settings
 # ==============================
-NAME = alpha
 MAJOR = x
 MINOR = x
 FIX = x
 LABEL = dev
 BUILD = x
 VERSION = $(MAJOR).$(MINOR).$(FIX)
-RELEASE = $(NAME)-$(VERSION)-$(LABEL)$(BUILD)
+RELEASE = alpha-$(VERSION)-$(LABEL)$(BUILD)
 
 # Directories
 # ==============================
@@ -63,7 +62,7 @@ COMMON_OBJS = $(patsubst $(SRC_DIR)common%,$(OBJ_DIR)common%,$(COMMON_SRCS:.cpp=
 # Bin specific Objects
 # ==============================
 
-APP_OBJS = $(COMMON_OBJS) $(OBJ_DIR)mains/$(NAME)-main.o
+APP_OBJS = $(COMMON_OBJS) $(OBJ_DIR)mains/alpha-main.o
 
 # Tests
 # ==============================
@@ -91,7 +90,7 @@ MAX_LINE_LENGHT = 100
 
 .PHONY : all fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck cpplint lizard install uninstall dist
 
-all: $(BIN_DIR)$(NAME)
+all: $(BIN_DIR)alpha
 
 fresh: clean all
 
@@ -113,7 +112,7 @@ clean: clean-cpp
 index:
 	@mkdir -p $(RPT_DIR)
 	@cp -r $(UTL_DIR)web $(RPT_DIR)
-	@jade --obj "{ 'name': '$(NAME)', \
+	@jade --obj "{ 'name': 'alpha', \
 				   'major': '$(MAJOR)', \
 				   'minor': '$(MINOR)', \
 				   'fix': '$(FIX)', \
@@ -127,7 +126,7 @@ test: clean cppcheck cpplint all cxxtest valgrind lizard index
 
 docs: index
 	@cp Doxyfile Doxyfile.filled
-	@echo "PROJECT_NAME = $(shell echo $(NAME) | tr a-z A-Z)" >> Doxyfile.filled
+	@echo "PROJECT_NAME = $(shell echo alpha | tr a-z A-Z)" >> Doxyfile.filled
 	@echo "PROJECT_NUMBER = $(RELEASE)" >> Doxyfile.filled
 	@$(DOXYGEN) Doxyfile.filled
 	@rm -f Doxyfile.filled
@@ -193,13 +192,11 @@ lizard: $(SRC_DIR)/common/Release.h
 install: all
 	@echo "Installing to $(DESTDIR)"
 	mkdir -p $(DESTDIR)/usr/local/bin/
-	cp -p $(BIN_DIR)$(NAME) $(DESTDIR)/usr/local/bin/
+	cp -p $(BIN_DIR)alpha $(DESTDIR)/usr/local/bin/
 
 uninstall:
 	@echo "Uninstalling from $(DESTDIR)"
-	rm -rf $(DESTDIR)/opt/$(NAME)/$(NAME)
-	rm -rf $(DESTDIR)/etc/$(NAME)
-	rm -rf $(DESTDIR)/etc/init.d/$(NAME)
+	rm -f $(DESTDIR)/usr/local/bin/$(BIN_DIR)alpha
 
 dist: clean
 	@echo "Making distribution"
@@ -220,7 +217,7 @@ $(SRC_DIR)/common/Release.h: Makefile
 	@echo '' >> $(SRC_DIR)/common/Release.h
 	@echo '#include <string>' >> $(SRC_DIR)/common/Release.h
 	@echo '' >> $(SRC_DIR)/common/Release.h
-	@echo 'const std::string NAME = "$(NAME)";' >> $(SRC_DIR)/common/Release.h
+	@echo 'const std::string NAME = "alpha";' >> $(SRC_DIR)/common/Release.h
 	@echo 'const std::string MAJOR = "$(MAJOR)";' >> $(SRC_DIR)/common/Release.h
 	@echo 'const std::string MINOR = "$(MINOR)";' >> $(SRC_DIR)/common/Release.h
 	@echo 'const std::string FIX = "$(FIX)";' >> $(SRC_DIR)/common/Release.h
@@ -234,7 +231,7 @@ $(SRC_DIR)/common/Release.h: Makefile
 # Linking
 # ==============================
 
-$(BIN_DIR)$(NAME): $(APP_OBJS)
+$(BIN_DIR)alpha: $(APP_OBJS)
 	@echo "Linking APP_OBJS into $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(LK_FLAGS) $(APP_OBJS) $(LIB_INC) -Wl,-Bstatic $(STATIC_LIBS) -Wl,-Bdynamic $(SHARED_LIBS) -Wl,--as-needed -o $@
@@ -254,7 +251,7 @@ $(TST_RUNNER_SRC): $(TST_SRCS)
 # ==============================
 # Compiling mains separately as there is no header file for main files.
 
-$(OBJ_DIR)mains/$(NAME)-main.o: $(SRC_DIR)mains/$(NAME)-main.cpp $(SRC_DIR)/common/Release.h
+$(OBJ_DIR)mains/alpha-main.o: $(SRC_DIR)mains/alpha-main.cpp $(SRC_DIR)/common/Release.h
 	@echo "Compling $< into $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(CC_INCLUDES) -c $< -o $@

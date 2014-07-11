@@ -1,8 +1,8 @@
-Name:           alpha
+Name:           alpha-puppet
 Version:        %{version}
 Release:        %{release_label}%{?dist}
 Summary:        C++ Command Line Tool
-
+BuildArch:           noarch
 Group:          Development/Tools
 License:        MIT
 URL:            https://github.com/almcc/cpp-makefile
@@ -27,7 +27,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 
 %files
-/usr/local/bin/alpha
+/etc/puppet/modules/alpha-setup/*
+/etc/puppet/modules/alpha-devel/*
 
 %defattr(-,root,root,-)
 %doc
