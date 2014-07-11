@@ -1,10 +1,10 @@
 # Release Settings
 # ==============================
-MAJOR = 0
-MINOR = 1
-FIX = 0
+MAJOR = x
+MINOR = x
+FIX = x
 LABEL = dev
-BUILD = 1
+BUILD = x
 VERSION = $(MAJOR).$(MINOR).$(FIX)
 RELEASE = alpha-sphinx-$(VERSION)-$(LABEL)$(BUILD)
 
@@ -210,9 +210,9 @@ dist: clean dirhtml latexpdf
 	@rm -rf $(RELEASE)/
 
 install: dirhtml latexpdf
-	@mkdir -p $(DESTDIR)/var/www/html/alpha
-	@cp -r _build/dirhtml/* $(DESTDIR)/var/www/html/alpha/
-	@cp -r _build/latex/Alpha.pdf $(DESTDIR)/var/www/html/alpha/
+	@mkdir -p $(DESTDIR)/var/www/html/$(RELEASE)
+	@cp -r _build/dirhtml/* $(DESTDIR)/var/www/html/$(RELEASE)/
+	@cp -r _build/latex/Alpha.pdf $(DESTDIR)/var/www/html/$(RELEASE)/
 
 uninstall:
-	@rm -rf $(DESTDIR)/var/www/html/alpha
+	@rm -rf $(DESTDIR)/var/www/html/$(RELEASE)

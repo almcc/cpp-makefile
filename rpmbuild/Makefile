@@ -1,11 +1,10 @@
 # Release Settings
 # ==============================
-NAME = alpha
-MAJOR = X
-MINOR = X
-FIX = X
+MAJOR = x
+MINOR = x
+FIX = x
 LABEL = dev
-BUILD = X
+BUILD = x
 VERSION = $(MAJOR).$(MINOR).$(FIX)
 RELEASE = alpha-$(VERSION)-$(LABEL)$(BUILD)
 

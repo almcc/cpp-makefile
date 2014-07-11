@@ -27,7 +27,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 
 %files
-/var/www/html/alpha/*
+/var/www/html/%{name}-%{version}-%{release_label}/*
 
 %defattr(-,root,root,-)
 %doc
