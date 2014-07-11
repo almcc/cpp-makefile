@@ -91,6 +91,9 @@ sudo /usr/local/bin/easy_install-2.7 -U Sphinx
 sudo /usr/local/bin/pip2.7 install sphinx_rtd_theme
 popd
 
+# robot framework
+sudo /usr/local/bin/pip2.7 install robotframework
+
 # starting services
 sudo service jenkins start
 sudo chkconfig jenkins on
