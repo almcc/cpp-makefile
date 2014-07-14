@@ -277,5 +277,5 @@ plantuml_latex_output_format = 'pdf'
 # Breathe settings
 breathe_projects = {
     "source":"../source/rpt/doxygen/xml/",
-    }
+}
 breathe_default_project = "source"
