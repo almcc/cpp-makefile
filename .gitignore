@@ -1,10 +1,6 @@
 .vagrant
-bin/
-dst/
-obj/
-rpt/
+*.o
 *.gcno
 *.gcda
-cxxtest.xml
 *.DS_Store
 release/

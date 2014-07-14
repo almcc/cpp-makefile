@@ -16,7 +16,7 @@ sudo yum clean all
 
 # packages
 sudo yum groupinstall -y development
-sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel texlive-latex plantuml
+sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel texlive-latex plantuml pcre-devel
 
 # lcov
 wget http://downloads.sourceforge.net/ltp/lcov-1.11-1.noarch.rpm
@@ -99,3 +99,13 @@ sudo /usr/local/bin/pip2.7 install robotframework
 # starting services
 sudo service jenkins start
 sudo chkconfig jenkins on
+
+# Swig
+wget http://downloads.sourceforge.net/project/swig/swig/swig-3.0.2/swig-3.0.2.tar.gz
+tar -xvf swig-3.0.2.tar.gz
+pushd swig-3.0.2
+./configure
+make
+sudo make install
+popd
+rm -rf swig-3.0.2*

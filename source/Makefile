@@ -28,9 +28,12 @@ VPATH = $(SRC_DIR) $(TST_DIR)
 
 CC = /opt/rh/devtoolset-2/root/usr/bin/g++
 CC_INCLUDES = -I$(SRC_DIR)common/ \
-              -I$(TST_DIR)common/
+              -I$(TST_DIR)common/ \
+              -I/usr/local/include/python2.7/
 
-CC_FLAGS = -g -O3 -std=c++11 -Wpedantic -Wall -Wextra -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow --coverage
+CC_OPTIONS = -g -O3 -fPIC -std=c++11 --coverage
+CC_WARNINGS = -Wpedantic -Wall -Wextra -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow
+CC_FLAGS = $(CC_OPTIONS) $(CC_WARNINGS)
 LK_FLAGS = --coverage
 
 # Tools
@@ -45,6 +48,14 @@ DOXYGEN = /usr/local/bin/doxygen
 LIB_INC = -L/usr/lib -L/usr/lib64
 SHARED_LIBS =
 STATIC_LIBS =
+
+# Swig
+# ==============================
+
+SWIG_INT = src/swig/alpha.swig
+SWIG_SRC = src/swig/alpha_wrap.cxx
+SWIG_PYT = src/swig/alpha.py
+SWIG_OBJ = obj/swig/alpha_wrap.o
 
 # All sources and objects
 # ==============================
@@ -88,9 +99,13 @@ MAX_LINE_LENGHT = 100
 # Targets
 # ==============================
 
-.PHONY : all fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck cpplint lizard install uninstall dist
+.PHONY : all bins libs fresh clean-cpp clean index test docs build cxxtest valgrind cppcheck cpplint lizard install uninstall dist
 
-all: $(BIN_DIR)alpha
+all: bins libs
+
+bins: $(BIN_DIR)alpha
+
+libs: $(LIB_DIR)_alpha.so
 
 fresh: clean all
 
@@ -108,6 +123,7 @@ clean: clean-cpp
 	@find . -name '*.DS_Store' -type f -delete
 	@rm -rf $(RPT_DIR)
 	@rm -f $(TST_XML_OUT)
+	@rm -f $(SWIG_SRC)
 
 index:
 	@mkdir -p $(RPT_DIR)
@@ -264,6 +280,29 @@ $(TST_RUNNER_OBJ): $(TST_RUNNER_SRC)
 	@mkdir -p $(dir $@)
 	@$(CC) -g --coverage $(CC_INCLUDES) -c $< -o $@
 
+# Compiling Swig
+# ==============================
+# Generating and then compling the swig wrapper for python
+
+$(SWIG_OBJ): $(SWIG_SRC)
+	@echo "Compling $< into $@"
+	@mkdir -p $(dir $@)
+	@$(CC) $(CC_OPTIONS) $(CC_INCLUDES) -c $< -o $@
+
+$(SWIG_SRC): $(SWIG_INT)
+	@mkdir -p $(LIB_DIR)
+	@echo "Compling $< into $@"
+	@mkdir -p $(dir $@)
+	@swig -c++ -python $<
+	@mv $(SWIG_PYT) $(LIB_DIR)
+
+# Shared Libraries
+# ==============================
+
+$(LIB_DIR)_alpha.so: $(SWIG_OBJ) $(COMMON_OBJS)
+	@mkdir -p $(LIB_DIR)
+	@$(CC) $(CC_FLAGS) -shared $(COMMON_OBJS) $(SWIG_OBJ) -o $(LIB_DIR)_alpha.so
+
 # Compiling Standard Classes
 # ==============================
 # Compiling section, using VPATH = $(SRC_DIR) to allow different obj and src dirs.
@@ -272,4 +311,3 @@ $(OBJ_DIR)%.o: %.cpp %.h $(SRC_DIR)/common/Release.h
 	@echo "Compling $< into $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(CC_FLAGS) $(CC_INCLUDES) -c $< -o $@
-

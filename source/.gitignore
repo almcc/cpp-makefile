@@ -1,0 +1,6 @@
+bin/
+lib/
+dst/
+obj/
+rpt/
+cxxtest.xml
