@@ -33,6 +33,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.ifconfig',
+    'sphinxcontrib.plantuml',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -265,3 +266,10 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+# Plant UML settings
+
+plantuml = 'plantuml -config plantuml.conf'
+plantuml_epstopdf = 'epstopdf'
+plantuml_output_format = 'svg'
+plantuml_latex_output_format = 'pdf'

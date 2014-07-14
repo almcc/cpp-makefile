@@ -16,7 +16,7 @@ sudo yum clean all
 
 # packages
 sudo yum groupinstall -y development
-sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel texlive-latex
+sudo yum install -y cppcheck libxslt tree python-pygments nodejs npm python-pip graphviz valgrind java-1.6.0-openjdk zlib-dev openssl-devel sqlite-devel bzip2-devel texlive-latex plantuml
 
 # lcov
 wget http://downloads.sourceforge.net/ltp/lcov-1.11-1.noarch.rpm
@@ -93,6 +93,8 @@ popd
 
 # robot framework
 sudo /usr/local/bin/pip2.7 install robotframework
+
+sudo /usr/local/bin/pip2.7 install sphinxcontrib-plantuml
 
 # starting services
 sudo service jenkins start
