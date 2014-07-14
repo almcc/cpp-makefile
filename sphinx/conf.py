@@ -34,6 +34,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.ifconfig',
     'sphinxcontrib.plantuml',
+    'breathe',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -268,8 +269,13 @@ texinfo_documents = [
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 # Plant UML settings
-
 plantuml = 'plantuml -config plantuml.conf'
 plantuml_epstopdf = 'epstopdf'
 plantuml_output_format = 'svg'
 plantuml_latex_output_format = 'pdf'
+
+# Breathe settings
+breathe_projects = {
+    "source":"../source/rpt/doxygen/xml/",
+    }
+breathe_default_project = "source"

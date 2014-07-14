@@ -89,12 +89,12 @@ sudo npm install jade --global
 pushd /tmp # Can't run this in a directory with a child directroy named sphinx
 sudo /usr/local/bin/easy_install-2.7 -U Sphinx
 sudo /usr/local/bin/pip2.7 install sphinx_rtd_theme
+sudo /usr/local/bin/pip2.7 install sphinxcontrib-plantuml
+sudo /usr/local/bin/pip2.7 install breathe
 popd
 
 # robot framework
 sudo /usr/local/bin/pip2.7 install robotframework
-
-sudo /usr/local/bin/pip2.7 install sphinxcontrib-plantuml
 
 # starting services
 sudo service jenkins start
