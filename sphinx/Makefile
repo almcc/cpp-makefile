@@ -200,6 +200,7 @@ dist: clean dirhtml latexpdf
 	@echo "Making distribution"
 	@mkdir -p $(DST_DIR)
 	@mkdir -p $(RELEASE)/
+	@mkdir -p _static/ _templates/
 	@cp -r _static/ $(RELEASE)/
 	@cp -r _templates/ $(RELEASE)/
 	@cp -r content/ $(RELEASE)/
